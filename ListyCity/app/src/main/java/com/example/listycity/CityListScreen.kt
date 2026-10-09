@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,14 +33,18 @@ fun CityListScreen(
     cities: List<City>,
     onAddCity: (City) -> Unit,
     onUpdateCity: (City, City) -> Unit,
+    onDeleteCity: (City) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var newCityName by remember { mutableStateOf("") }
     var newProvinceName by remember { mutableStateOf("") }
     var showAddCityFields by remember { mutableStateOf(false) }
+    var showDeleteCityFields by remember { mutableStateOf(false) }
     var selectedCity by remember { mutableStateOf<City?>(null) }
     var editedCityName by remember { mutableStateOf("") }
     var editedProvinceName by remember { mutableStateOf("") }
+    var deletedCityName by remember { mutableStateOf("") }
+    var deletedProvinceName by remember { mutableStateOf("") }
 
     Column(modifier = modifier.fillMaxSize()) {
         Row(
@@ -153,8 +158,33 @@ fun CityListScreen(
                 ) {
                     Text("UPDATE CITY")
                 }
+
+
+                Button(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    onClick = {
+                        val cityToDelete = selectedCity
+                        //deletedCityName = cityToDelete.name
+                        if (
+                            cityToDelete != null
+                        ) {
+                            onDeleteCity(
+                                City(
+                                    name = cityToDelete.name,
+                                    province = cityToDelete.province
+                                )
+                            )
+
+                            selectedCity = null
+                        }
+                    }
+                ) {
+                    Text("Delete")
+                }
             }
         }
+
+
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             itemsIndexed(cities) { index, city ->
                 CityRow(
@@ -174,7 +204,13 @@ fun CityListScreen(
             }
         }
     }
+
+
+
+
 }
+
+//
 
 
 @Composable
@@ -213,7 +249,8 @@ fun CityListScreenPreview() {
                 City("Calgary", "AB")
             ),
             onAddCity = {},
-            onUpdateCity = { _, _ -> }
+            onUpdateCity = { _, _ -> },
+            onDeleteCity ={}
         )
     }
 }
